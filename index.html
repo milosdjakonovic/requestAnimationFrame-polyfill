@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>T</title>
+	
+
+<script src="rafPolyfill.js"></script>	
+<!-- https://codepen.io/chriscoyier/pen/ltseg -->	
+<style>
+div {
+  width: 10px;
+  height: 10px;
+  background: orange;
+  float: left;
+}
+
+button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+#stop {
+  left: 100px;
+}
+</style>	
+	
+  </head>
+  <body>
+
+<button id="start">start</button>
+<button id="stop">stop</button>  
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script>
+
+
+
+;(function(w,d,$){
+
+	
+	
+	$(d).ready(function($){
+		
+	var globalID, body = d.body || d.getElementsByTagName('body')[0];
+
+	function repeatOften() {
+	  body.appendChild(d.createElement('div'));
+	  //globalID = requestAnimationFrame(repeatOften);
+	  globalID = raf(repeatOften);
+	}
+
+	//globalID = requestAnimationFrame(repeatOften);
+	//globalID = raf(repeatOften);
+
+	$("#stop").on("click", function() {
+	  //cancelAnimationFrame(globalID);
+	  cancelRaf(globalID);
+	});	
+	$("#start").on("click", function() {
+	  //globalID = requestAnimationFrame(repeatOften);
+	  globalID = raf(repeatOften);
+	});
+	
+		
+	});
+	
+})(window, document, jQuery);
+
+</script>
+
+  </body>
+</html>
