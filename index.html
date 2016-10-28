@@ -38,35 +38,34 @@ button {
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script>
-
-
-
 ;(function(w,d,$){
-
-	
 	
 	$(d).ready(function($){
 		
 	var globalID, body = d.body || d.getElementsByTagName('body')[0];
 
-	function repeatOften() {
+	function repeatOften() { //return false;
 	  body.appendChild(d.createElement('div'));
-	  //globalID = requestAnimationFrame(repeatOften);
 	  globalID = raf(repeatOften);
 	}
 
-	//globalID = requestAnimationFrame(repeatOften);
 	//globalID = raf(repeatOften);
 
-	$("#stop").on("click", function() {
-	  //cancelAnimationFrame(globalID);
+	$("#stop").on("click", function(){
 	  cancelRaf(globalID);
-	});	
+	});
+	
 	$("#start").on("click", function() {
-	  //globalID = requestAnimationFrame(repeatOften);
 	  globalID = raf(repeatOften);
 	});
 	
+	$("#start").trigger('click');
+	setTimeout(function(){$("#stop").trigger("click")},2000);
+	
+	setTimeout(function(){
+		raf(function(){  console.log('bla')  });
+	},2000);
+	//raf(function(){});raf(function(){});raf(function(){});raf(function(){});raf(function(){});raf(function(){});raf(function(){});raf(function(){});raf(function(){});raf(function(){});
 		
 	});
 	

@@ -39,6 +39,23 @@
 	**/	
 	allCallbacks = [],
 	
+	executeAllZakazan = false,
+	
+	shouldCheckCancelRaf = false,
+	
+	callbacksForCancellation = [],
+	
+	
+	isToBeCancelled = function(cb){
+		for(var i=0;i<callbacksForCancellation.length;i++){
+			if(callbacksForCancellation[i] === cb ){
+				callbacksForCancellation.splice(i,1);
+				return true;
+			}
+		}
+	},
+	
+	
 	/**
 	 *
 	 * Crutches for `performance.now`.
@@ -56,12 +73,19 @@
 	 * and removes them from callback queue
 	 * subsequently.
 	 *
-	**/	
+	**/
 	executeAll = function(){
+		executeAllZakazan = false;
 		var _allCallbacks = allCallbacks;
+		allCallbacks = [];
 		for(var i=0;i<_allCallbacks.length;i++){
+			if(shouldCheckCancelRaf===true){
+				if (isToBeCancelled(_allCallbacks[i])){
+					shouldCheckCancelRaf = false;
+					return;
+				}
+			}
 			_allCallbacks[i].apply(w, [ now() ] );
-			_allCallbacks.splice(i, 1);
 		}
 	}
 	
@@ -79,7 +103,10 @@
 	**/	
 	w.raf =	function(callback){
 		allCallbacks.push(callback);
-		w.setTimeout(executeAll, FRAME_RATE_INTERVAL);	
+		if(executeAllZakazan===false){
+			w.setTimeout(executeAll, FRAME_RATE_INTERVAL);
+			executeAllZakazan = true;
+		}
 		return callback;
 	};
 
@@ -88,13 +115,8 @@
 	 * Cancels raf.
 	**/	
 	w.cancelRaf = function(callback){
-
-		var _allCallbacks = allCallbacks;
-		for(var i=0;i<_allCallbacks.length;i++){
-			if( _allCallbacks[i]=== callback )
-			_allCallbacks.splice(i, 1);
-		}
-
+		callbacksForCancellation.push(callback);
+		shouldCheckCancelRaf = true;
 	};
 
 })(window);
