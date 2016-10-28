@@ -56,17 +56,6 @@
 	},
 	
 	
-	/**
-	 *
-	 * Crutches for `performance.now`.
-	**/
-	now = function(){
-		if ("performance" in w && w.performance.now)
-			return w.performance.now();
-		else if(w.Date.now){
-			return w.Date.now();
-		} else new Date().getTime();
-	},
 	
 	/**
 	 * Executes all (surprise) callbacks in
@@ -85,7 +74,7 @@
 					return;
 				}
 			}
-			_allCallbacks[i].apply(w, [ now() ] );
+			_allCallbacks[i].apply(w, [ new Date().getTime() ] );
 		}
 	}
 	
