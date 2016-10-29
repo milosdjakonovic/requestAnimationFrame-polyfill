@@ -1,16 +1,5 @@
-/**
- * -----------------------------------------------------------|
- * -------------- requestAnimationFrame polyfill--------------|
- * -----------------------------------------------------------|
- * @description does what requestAnimationFrame polyfill should do
- * @author      Milos Djakonovic ( @Miloshio )
- * @license     MIT
- * --------------------------------------
-**/
-
+//requestAnimationFrame polyfill | Milos Djakonovic ( @Miloshio ) | MIT | https://github.com/milosdjakonovic/requestAnimationFrame-polyfill
 (function(w){
-
-	
 	/**
 	 * 
 	 * How many times should polyfill call
@@ -34,18 +23,23 @@
 	var FRAME_RATE_INTERVAL = 1000/60,
 
 	/**
-	 *
-	 * All queued callbacks.
+	 * All queued callbacks in given cycle.
 	**/	
 	allCallbacks = [],
 	
-	executeAllZakazan = false,
+	executeAllScheduled = false,
 	
 	shouldCheckCancelRaf = false,
 	
+	/**
+	 * Callbacks queued for cancellation.
+	**/	
 	callbacksForCancellation = [],
 	
-	
+	/**
+	 * Should callback be cancelled?
+	 * @param cb - callback
+	**/	
 	isToBeCancelled = function(cb){
 		for(var i=0;i<callbacksForCancellation.length;i++){
 			if(callbacksForCancellation[i] === cb ){
@@ -58,13 +52,13 @@
 	
 	
 	/**
+	 * 
 	 * Executes all (surprise) callbacks in
-	 * and removes them from callback queue
-	 * subsequently.
+	 * and removes them from callback queue.
 	 *
 	**/
 	executeAll = function(){
-		executeAllZakazan = false;
+		executeAllScheduled = false;
 		var _allCallbacks = allCallbacks;
 		allCallbacks = [];
 		for(var i=0;i<_allCallbacks.length;i++){
@@ -76,36 +70,44 @@
 			}
 			_allCallbacks[i].apply(w, [ new Date().getTime() ] );
 		}
-	}
+	},
 	
 	/**
 	 *
-	 * Global exposure. In this phase I
-	 * purposely don't want to polyfill
-	 * requestAnimationFrame, because of
-	 * testing. One can manually polyfill
-	 * requestAnimationFrame easily.
-	 *
-	 * Just like native takes callback as 
-	 * arg and queues it for later execution.
+	 * requestAnimationFrame polyfill
+	 * @param callback - callback to be queued & executed | executed
+	 * @return callback
 	 * 
 	**/	
-	w.raf =	function(callback){
+	raf = function(callback){
 		allCallbacks.push(callback);
-		if(executeAllZakazan===false){
+		if(executeAllScheduled===false){
 			w.setTimeout(executeAll, FRAME_RATE_INTERVAL);
-			executeAllZakazan = true;
+			executeAllScheduled = true;
 		}
 		return callback;
-	};
+	},
 
 	/**
 	 *
 	 * Cancels raf.
 	**/	
-	w.cancelRaf = function(callback){
+	cancelRaf = function(callback){
 		callbacksForCancellation.push(callback);
 		shouldCheckCancelRaf = true;
-	};
+	},
+
+
+	//https://gist.github.com/paulirish/1579671
+	vendors = ['ms', 'moz', 'webkit', 'o'];
+
+    for(var x = 0; x < vendors.length && !w.requestAnimationFrame; ++x) {
+        w.requestAnimationFrame = w[vendors[x]+'RequestAnimationFrame'];
+        w.cancelAnimationFrame = w[vendors[x]+'CancelAnimationFrame'] 
+        || w[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+
+	if (!w.requestAnimationFrame) w.requestAnimationFrame = raf;
+ 	if (!w.cancelAnimationFrame)  w.cancelAnimationFrame  = cancelRaf;	
 
 })(window);

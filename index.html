@@ -42,7 +42,7 @@ button {
 	
 	$(d).ready(function($){
 		
-	var globalID, body = d.body || d.getElementsByTagName('body')[0];
+	var globalID, body = d.body || d.getElementsByTagName('body')[0], raf = requestAnimationFrame, cancelRaf = cancelAnimationFrame;
 
 	function repeatOften() { //return false;
 	  body.appendChild(d.createElement('div'));
@@ -60,12 +60,22 @@ button {
 	});
 	
 	$("#start").trigger('click');
-	setTimeout(function(){$("#stop").trigger("click")},2000);
+	//setTimeout(function(){$("#stop").trigger("click")},2000);
 	
 	setTimeout(function(){
-		raf(function(){  console.log('bla')  });
+		raf(function(){  console.log('Check callback queued')  });
 	},2000);
-	//raf(function(){});raf(function(){});raf(function(){});raf(function(){});raf(function(){});raf(function(){});raf(function(){});raf(function(){});raf(function(){});raf(function(){});
+	
+		raf(function(){});
+		raf(function(){});
+		raf(function(){});
+		raf(function(){});
+		raf(function(){});
+		raf(function(){});
+		raf(function(){});
+		raf(function(){});
+		raf(function(){});
+		raf(function(){  $('body').css('background-color', 'green')  });
 		
 	});
 	
