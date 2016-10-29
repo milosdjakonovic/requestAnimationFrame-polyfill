@@ -1,6 +1,13 @@
 # requestAnimationFrame polyfill
-Fixes missing `requestAnimationFrame` API in legacy browsers.
+Polyfills missing `requestAnimationFrame` API in legacy browsers.
 ### So, why another one?
-Proof of concept. This one implements callback queueing/dequeuing and simultaneous execution, unlike some often used.
-### Why is `raf`/`cancelRaf` globals defined instead of expected ones?
-Still in development. Testing.
+- This one is, as far as I know, the only one that implements callback queueing/dequeuing and simultaneous execution.
+
+- Other requestAnimationFrame polyfills, again AFAIK, are doing job by calculating dynamic next frame time for each callback and scheduling ( via `setTimeout` ) each callback separately.
+
+This requestAnimationFrame polyfill queues callback for **single scheduled next-frame execution**. 
+
+---------------------------------------
+
+### What are performance benefits from this approach?
+Still examining. Looks good in my test so far.
